@@ -1,0 +1,18 @@
+Include /etc/ssh/sshd_config.d/*.conf
+
+Port 30122
+LoginGraceTime 2m
+PermitRootLogin no
+MaxAuthTries 4
+MaxSessions 2
+PubkeyAuthentication yes
+RSAAuthentication yes
+ChallengeResponseAuthentication no
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+UsePAM no
+X11Forwarding yes
+PrintMotd no
+MaxStartups 2
+AcceptEnv LANG LC_*
+Subsystem sftp  /usr/lib/openssh/sftp-server
