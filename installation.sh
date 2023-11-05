@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+set -e
 
 echo "Debian full upgrade"
 sudo apt-get update
@@ -31,19 +31,28 @@ libffi-dev \
 speedometer
 
 # Install Docker
-curl -fsSL https://get.docker.com -o get-docker.sh
-sh get-docker.sh
+# Add Docker's official GPG key:
+sudo apt-get update
+sudo apt-get install ca-certificates curl gnupg
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
 
-sudo groupadd docker
-sudo usermod -aG docker $USER
+# Add the repository to Apt sources:
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # Add external USB drives
 
 sudo mkdir -p /usb0
 sudo mkdir -p /usb1
 
-sudo EOF >> /etc/fstab
-UUID=ffb8c881-a16d-4727-b0bc-460ea9bc55d7 /usb0 ext4 defaults 0 0
-UUID=df67daaf-4391-49c9-a05f-5a8be688bc64 /usb1 ext4 defaults 0 0
-EOF
+echo "UUID=$DISK0 /usb0 ext4 defaults 0 0" | sudo tee -a /etc/fstab
+echo "UUID=$DISK1 /usb1 ext4 defaults 0 0" | sudo tee -a /etc/fstab
+
 
