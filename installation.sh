@@ -1,11 +1,12 @@
 #!/bin/bash
 set -x
 
-echo "Ubuntu full upgrade"
+echo "Debian full upgrade"
 sudo apt-get update
 sudo apt full-upgrade -y
 sudo apt-get autoremove -y
 sudo apt-get autoclean -y
+
 
 # Docker pre-installation
 sudo echo "cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" >> /boot/cmdline.txt
@@ -28,6 +29,15 @@ libssl-dev \
 libreadline-dev \
 libffi-dev \
 speedometer
+
+# Install Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sh get-docker.sh
+
+sudo groupadd docker
+sudo usermod -aG docker $USER
+
+# Add external USB drives
 
 sudo mkdir -p /usb0
 sudo mkdir -p /usb1
