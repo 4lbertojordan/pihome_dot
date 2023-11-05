@@ -1,21 +1,14 @@
 #!/bin/bash
+set -x
 
 echo "Ubuntu full upgrade"
 sudo apt-get update
-sudo apt-get upgrade -y
-sudo apt-get dist-upgrade -y
+sudo apt full-upgrade -y
 sudo apt-get autoremove -y
 sudo apt-get autoclean -y
 
-echo "cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" >> /boot/cmdline.txt
-
-echo "Install Docker"
-curl -fsSL https://get.docker.com -o get-docker.sh
-sh get-docker.sh
-
-echo "Add user to docker group"
-sudo groupadd docker
-sudo usermod -aG docker $USER
+# Docker pre-installation
+sudo echo "cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" >> /boot/cmdline.txt
 
 echo "Install software"
 sudo apt-get install -y \
@@ -25,9 +18,22 @@ curl \
 file \
 git \
 vim \
-bat \
 neofetch \
-python3-pip -y
+fail2ban \
+zlib1g-dev \
+libncurses5-dev \
+libgdbm-dev \
+libnss3-dev \
+libssl-dev \
+libreadline-dev \
+libffi-dev \
+speedometer
 
-echo "Install docker-compose"
-sudo pip3 install docker-compose
+sudo mkdir -p /usb0
+sudo mkdir -p /usb1
+
+sudo EOF >> /etc/fstab
+UUID=ffb8c881-a16d-4727-b0bc-460ea9bc55d7 /usb0 ext4 defaults 0 0
+UUID=df67daaf-4391-49c9-a05f-5a8be688bc64 /usb1 ext4 defaults 0 0
+EOF
+
