@@ -1,0 +1,33 @@
+# Fail2Ban configuration for SSH and TigerVNC with Discord notifications
+
+[DEFAULT]
+# General settings for all jails
+bantime = 604800
+findtime = 3600
+maxretry = 3
+backend = auto
+banaction = iptables-multiport
+logencoding = auto
+
+# Ignore trusted IPs
+ignoreip = 127.0.0.1 192.168.153.0/24
+
+# Use the custom Discord notification action
+action = discord
+
+# SSH Jail
+[sshd]
+enabled = true
+port = 53122
+filter = sshd
+logpath = /var/log/auth.log
+maxretry = 5
+
+# TigerVNC Jail
+[tigervnc]
+enabled = true
+port = 5900,5901,5902
+filter = tigervnc
+logpath = /var/log/vnc.log
+maxretry = 3
+action = discord
